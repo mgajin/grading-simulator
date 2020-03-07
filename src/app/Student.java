@@ -10,36 +10,47 @@ public class Student extends Thread {
     int score;
     ScheduledExecutorService executor;
     Semaphore assistant;
+    Professor professor;
 
-    public Student(int id, Assistant assistant) {
+    public Student(int id, Assistant assistant, Professor professor) {
         this.id = id;
         this.score = 0;
         this.executor = new ScheduledThreadPoolExecutor(1);
         this.assistant = assistant.semaphore;
+        this.professor = professor;
     }
 
-    @Override
-    public void run() {
+    public Future<Integer> task(int delay) {
 
-        int delay = new Random().nextInt(500) + 500;
-
-        try {
-            assistant.acquire();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        Future<Integer> future = executor.schedule(new Callable<Integer>() {
+        return executor.schedule(new Callable<Integer>() {
             @Override
             public Integer call() throws Exception {
                 return new Random().nextInt(11);
             }
         }, delay, TimeUnit.MILLISECONDS);
+    }
+
+    @Override
+    public void run() {
+
+//        int delay = new Random().nextInt(500) + 500;
+        int delay = 2000;
+        String who = "";
 
         try {
-            this.score = future.get();
-            System.out.println("Student[" + this.id + "] finished whit score: " + this.score + " at: " + new Date() + ", delay: " + delay);
-            assistant.release();
+            if (new Random().nextBoolean()) {
+                who = "assistant";
+                assistant.acquire();
+                this.score = task(delay).get();
+                assistant.release();
+            } else {
+                who = "professor";
+                professor.acquire();
+                professor.await(5);
+                this.score = task(delay).get();
+                professor.release();
+            }
+            System.out.println(who + " - Student[" + this.id + "] finished whit score: " + this.score + " at: " + new Date() + ", delay: " + delay);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         } finally {

@@ -7,14 +7,15 @@ public class Main {
 
     public static void main(String[] args) {
 
-        int n = 6;
+        int n = 10;
         List<Student> students = new ArrayList<>();
         Assistant assistant = new Assistant();
+        Professor professor = new Professor();
 
-        assistant.start();
+//        assistant.start();
 
         for (int i = 0; i < n; i++) {
-            Student student = new Student(i, assistant);
+            Student student = new Student(i, assistant, professor);
             students.add(student);
             student.start();
         }
