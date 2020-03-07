@@ -9,15 +9,18 @@ public class Main {
 
         int n = 6;
         List<Student> students = new ArrayList<>();
+        Assistant assistant = new Assistant();
+
+        assistant.start();
 
         for (int i = 0; i < n; i++) {
-            Student student = new Student(i);
+            Student student = new Student(i, assistant);
             students.add(student);
             student.start();
         }
 
         try {
-            Thread.sleep(3000);
+            Thread.sleep(5000);
             double averageScore = 0;
             for (Student student : students) {
                 averageScore += student.score;
