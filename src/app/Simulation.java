@@ -5,10 +5,10 @@ import java.util.List;
 
 public class Simulation {
 
-    List<Student> students;
-    Assistant assistant;
-    Professor professor;
-    int duration;
+    private List<Student> students;
+    private Assistant assistant;
+    private Professor professor;
+    private int duration;
 
     public Simulation(int n) {
         this.students = new ArrayList<>();
@@ -41,7 +41,7 @@ public class Simulation {
         try {
             Thread.sleep(simulation.duration);
             for (Student student : simulation.students) {
-                averageScore += student.score;
+                averageScore += student.getScore();
             }
             averageScore /= n;
             System.out.println("Average score: " + averageScore);

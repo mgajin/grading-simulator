@@ -4,8 +4,8 @@ import java.util.concurrent.*;
 
 public class Professor extends Thread {
 
-    CyclicBarrier barrier;
-    Semaphore semaphore;
+    private CyclicBarrier barrier;
+    private Semaphore semaphore;
 
     public Professor() {
         barrier = new CyclicBarrier(2);
