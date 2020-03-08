@@ -28,8 +28,8 @@ public class Professor extends Thread {
 
     public void await(int timeout) {
         try {
-            barrier.await(timeout, TimeUnit.SECONDS);
-        } catch (InterruptedException | BrokenBarrierException | TimeoutException e) {
+            barrier.await();
+        } catch (InterruptedException | BrokenBarrierException e) {
             e.printStackTrace();
         }
     }

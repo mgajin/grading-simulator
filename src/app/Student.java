@@ -13,6 +13,7 @@ public class Student extends Thread {
 
     private int id;
     private int score;
+    private String tutor;
     private Assistant assistant;
     private Professor professor;
     private String finished;
@@ -30,26 +31,29 @@ public class Student extends Thread {
         while (Simulation.isRunning.get()) {
             if (score == 0) {
                 try {
-                    String tutor;
-                    if (new Random().nextBoolean()) {
-                        tutor = "Assistant";
-                        assistant.acquire();
-                        sleep(2000);
-                        score = new Random().nextInt(10) + 1;
-                        assistant.release();
-                    } else {
-                        tutor = "Professor";
-                        professor.acquire();
-                        professor.await(1);
-                        sleep(2000);
-                        score = new Random().nextInt(10) + 1;
-                        professor.release();
-                    }
+                    present();
                     System.out.println(tutor + " - Student[" + id + "] -> score: " + score + " [" + new Date() + "]");
                 } catch (InterruptedException e) {
                     System.out.println("Student interrupted");
                 }
             }
+        }
+    }
+
+    public void present () throws InterruptedException {
+        if (new Random().nextBoolean()) {
+            tutor = "Assistant";
+            assistant.acquire();
+            sleep(2000);
+            score = new Random().nextInt(10) + 1;
+            assistant.release();
+        } else {
+            tutor = "Professor";
+            professor.acquire();
+            professor.await(1);
+            sleep(2000);
+            score = new Random().nextInt(10) + 1;
+            professor.release();
         }
     }
 

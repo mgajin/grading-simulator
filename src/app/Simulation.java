@@ -17,22 +17,19 @@ public class Simulation {
     private int duration;
     static AtomicBoolean isRunning;
 
-    static ScheduledThreadPoolExecutor studentExe;
-    static ExecutorService executor;
-    CountDownLatch latch;
+    private ScheduledThreadPoolExecutor studentExe;
+    private ExecutorService executor;
+    private CountDownLatch latch;
 
-    public Simulation(int n) {
+    public Simulation() {
+        duration = 5000;
+        students = new ArrayList<>();
         latch = new CountDownLatch(2);
-        this.students = new ArrayList<>();
         professor = new Professor(latch);
         assistant = new Assistant(latch);
-        duration = 5000;
-        isRunning = new AtomicBoolean(false);
-
         studentExe = new ScheduledThreadPoolExecutor(5);
         executor = Executors.newFixedThreadPool(2);
-
-        addStudents(n);
+        isRunning = new AtomicBoolean(false);
     }
 
     public void addStudents(int n) {
@@ -42,7 +39,9 @@ public class Simulation {
         }
     }
 
-    public void start() {
+    public void start(int n) {
+        addStudents(n);
+
         executor.execute(professor);
         executor.execute(assistant);
 
@@ -61,14 +60,14 @@ public class Simulation {
 
         int n = 10;
         double averageScore = 0;
-        Simulation simulation = new Simulation(n);
-        simulation.start();
+        Simulation simulation = new Simulation();
+        simulation.start(n);
 
         try {
             Thread.sleep(simulation.duration);
             isRunning.set(false);
-            executor.shutdownNow();
-            studentExe.shutdownNow();
+            simulation.executor.shutdownNow();
+            simulation.studentExe.shutdownNow();
 
             for (Student student : simulation.students) {
                 averageScore += student.getScore();
