@@ -5,6 +5,8 @@
 
 .idea/
 
+.out/
+
 # Compiled class file
 *.class
 
