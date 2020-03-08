@@ -52,4 +52,8 @@ public class Student extends Thread {
             }
         }
     }
+
+    public int getScore() {
+        return score;
+    }
 }

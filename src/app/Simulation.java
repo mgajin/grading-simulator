@@ -60,6 +60,7 @@ public class Simulation {
     public static void main(String[] args) {
 
         int n = 10;
+        double averageScore = 0;
         Simulation simulation = new Simulation(n);
         simulation.start();
 
@@ -68,7 +69,12 @@ public class Simulation {
             isRunning.set(false);
             executor.shutdownNow();
             studentExe.shutdownNow();
-            System.out.println("Simulation finished");
+
+            for (Student student : simulation.students) {
+                averageScore += student.getScore();
+            }
+            averageScore /= n;
+            System.out.println("Average score: " + averageScore);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
