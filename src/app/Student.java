@@ -1,16 +1,18 @@
 package app;
 
+import app.Assistant;
+import app.Professor;
+import app.Simulation;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
-import java.util.concurrent.*;
 
 public class Student extends Thread {
 
     private int id;
     private int score;
-    private ScheduledExecutorService executor;
     private Assistant assistant;
     private Professor professor;
     private String finished;
@@ -19,54 +21,35 @@ public class Student extends Thread {
     public Student(int id, Assistant assistant, Professor professor) {
         this.id = id;
         this.score = 0;
-        this.executor = new ScheduledThreadPoolExecutor(1);
         this.assistant = assistant;
         this.professor = professor;
-        dateFormat = new SimpleDateFormat("mm:ss");
-    }
-
-    public Future<Integer> task(int delay) {
-
-        return executor.schedule(new Callable<Integer>() {
-            @Override
-            public Integer call() throws Exception {
-                finished = dateFormat.format(new Date());
-                return new Random().nextInt(10) + 1;
-            }
-        }, delay, TimeUnit.MILLISECONDS);
     }
 
     @Override
     public void run() {
-
-//        int delay = new Random().nextInt(500) + 500;
-        int duration = 2000;
-        String who = "";
-
-        try {
-            String started;
-            if (new Random().nextBoolean()) {
-                who = "assistant";
-                assistant.acquire();
-                started = dateFormat.format(new Date());
-                this.score = task(duration).get();
-                assistant.release();
-            } else {
-                who = "professor";
-                professor.acquire();
-                professor.await(2);
-                started = dateFormat.format(new Date());
-                this.score = task(duration).get();
-                professor.release();
+        while (Simulation.isRunning.get()) {
+            if (score == 0) {
+                try {
+                    String tutor;
+                    if (new Random().nextBoolean()) {
+                        tutor = "Assistant";
+                        assistant.acquire();
+                        sleep(2000);
+                        score = new Random().nextInt(10) + 1;
+                        assistant.release();
+                    } else {
+                        tutor = "Professor";
+                        professor.acquire();
+                        professor.await(1);
+                        sleep(2000);
+                        score = new Random().nextInt(10) + 1;
+                        professor.release();
+                    }
+                    System.out.println(tutor + " - Student[" + id + "] -> score: " + score + " [" + new Date() + "]");
+                } catch (InterruptedException e) {
+                    System.out.println("Student interrupted");
+                }
             }
-            System.out.println(who + " - Student[" + id + "] -> score:" + score +  " [" + started + "-" + finished + ", " + duration + "ms]");
-            executor.shutdownNow();
-        } catch (InterruptedException | ExecutionException e) {
-            System.out.println("Student[" + id + "interrupted, score:" + score + " [" + dateFormat.format(new Date()) + "]");
         }
-    }
-
-    public int getScore() {
-        return score;
     }
 }

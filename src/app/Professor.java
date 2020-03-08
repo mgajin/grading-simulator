@@ -6,10 +6,12 @@ public class Professor extends Thread {
 
     private CyclicBarrier barrier;
     private Semaphore semaphore;
+    private CountDownLatch latch;
 
-    public Professor() {
+    public Professor(CountDownLatch latch) {
         barrier = new CyclicBarrier(2);
         semaphore = new Semaphore(2);
+        this.latch = latch;
     }
 
     public void acquire() {
@@ -26,7 +28,7 @@ public class Professor extends Thread {
 
     public void await(int timeout) {
         try {
-            this.barrier.await(timeout, TimeUnit.SECONDS);
+            barrier.await(timeout, TimeUnit.SECONDS);
         } catch (InterruptedException | BrokenBarrierException | TimeoutException e) {
             e.printStackTrace();
         }
@@ -34,6 +36,7 @@ public class Professor extends Thread {
 
     @Override
     public void run() {
-        System.out.println("Barrier has broken");
+        latch.countDown();
+        System.out.println("Professor running: " + isAlive());
     }
 }
