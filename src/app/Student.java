@@ -25,7 +25,7 @@ public class Student extends Thread {
         return executor.schedule(new Callable<Integer>() {
             @Override
             public Integer call() throws Exception {
-                return new Random().nextInt(11);
+                return new Random().nextInt(10) + 1;
             }
         }, delay, TimeUnit.MILLISECONDS);
     }
@@ -46,13 +46,14 @@ public class Student extends Thread {
             } else {
                 who = "professor";
                 professor.acquire();
-                professor.await(5);
+                professor.await(2);
                 this.score = task(delay).get();
                 professor.release();
             }
             System.out.println(who + " - Student[" + this.id + "] finished whit score: " + this.score + " at: " + new Date() + ", delay: " + delay);
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            System.out.println("Student[" + id + "] interrupted at: " + new Date() + ", score: " + score);
+//                e.printStackTrace();
         } finally {
             executor.shutdown();
         }

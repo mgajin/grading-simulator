@@ -20,7 +20,7 @@ public class Simulation {
     }
 
     public void start() {
-        for (Student student : this.students) {
+        for (Student student : students) {
             student.start();
         }
     }
