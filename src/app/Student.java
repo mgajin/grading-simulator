@@ -9,6 +9,8 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.TimeoutException;
 
 public class Student extends Thread {
 
@@ -24,7 +26,6 @@ public class Student extends Thread {
 
     public Student(int id, Assistant assistant, Professor professor) {
         this.id = id;
-        this.score = 0;
         this.assistant = assistant;
         this.professor = professor;
         dateFormat = new SimpleDateFormat("mm:ss");
@@ -32,46 +33,50 @@ public class Student extends Thread {
 
     @Override
     public void run() {
-        while (Simulation.isRunning() && score == 0) {
-            try {
-                present();
-            } catch (InterruptedException e) {
-                assistant.release();
-                professor.release();
-//                if (tutor.equals("Assistant")) {
-//                    assistant.release();
-//                } else if (tutor.equals("Professor")){
-//                    professor.release();
-//                }
+        while (Simulation.isRunning()) {
+            score = new Random().nextBoolean() ? goProfessor() : goAssistant();
+            if (score > 0) {
+                printMe();
+                break;
             }
         }
     }
 
-    public void present() throws InterruptedException {
-        duration = new Random().nextInt(500) + 500;
-
-        if (new Random().nextBoolean()) {
-            tutor = "Assistant";
-            if (assistant.tryAcquire()) {
+    public int goProfessor() {
+        tutor = "Professor";
+        if (professor.tryAcquire()) {
+            try {
+                professor.await(1500);
                 started = dateFormat.format(new Date());
+                duration = new Random().nextInt(500) + 500;
                 sleep(duration);
-                score = new Random().nextInt(10) + 1;
-                assistant.release();
-                finished = dateFormat.format(new Date());
-                printMe();
-            }
-        } else {
-            tutor = "Professor";
-            if (professor.tryAcquire()) {
-                professor.await(2);
-                started = dateFormat.format(new Date());
-                sleep(duration);
-                score = new Random().nextInt(10) + 1;
                 professor.release();
                 finished = dateFormat.format(new Date());
-                printMe();
+                return new Random().nextInt(10) + 1;
+            } catch (BrokenBarrierException | TimeoutException e) {
+                goAssistant();
+            } catch (InterruptedException e) {
+                professor.release();
             }
         }
+        return 0;
+    }
+
+    public int goAssistant() {
+        tutor = "Assistant";
+        if (assistant.tryAcquire()) {
+            try {
+                started = dateFormat.format(new Date());
+                duration = new Random().nextInt(500) + 500;
+                sleep(duration);
+                assistant.release();
+                finished = dateFormat.format(new Date());
+                return new Random().nextInt(10) + 1;
+            } catch (InterruptedException e) {
+                assistant.release();
+            }
+        }
+        return 0;
     }
 
     public void printMe() {
