@@ -5,6 +5,7 @@ import app.Professor;
 import app.Simulation;
 
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
@@ -18,6 +19,7 @@ public class Student extends Thread {
     private Professor professor;
     private String started;
     private String finished;
+    private int duration;
     private DateFormat dateFormat;
 
     public Student(int id, Assistant assistant, Professor professor) {
@@ -34,7 +36,7 @@ public class Student extends Thread {
             try {
 //                if (score == 0) {
                     present();
-                    System.out.println(tutor + " - Student[" + id + "] -> score: " + score + " [" + started + "-" + finished +"]");
+                    printMe();
 //                }
             } catch (InterruptedException e) {
                 System.out.println("Student[" + id + "] interrupted");
@@ -44,7 +46,7 @@ public class Student extends Thread {
 
     public void present () throws InterruptedException {
         started = dateFormat.format(new Date());
-        int duration = new Random().nextInt(500) + 501;
+        duration = new Random().nextInt(500) + 501;
         if (new Random().nextBoolean()) {
             tutor = "Assistant";
             assistant.acquire();
@@ -60,6 +62,11 @@ public class Student extends Thread {
             professor.release();
         }
         finished = dateFormat.format(new Date());
+    }
+
+    public void printMe() {
+        String log = MessageFormat.format("{0} - Student[{1}] -> score: {2} [{3}-{4}, {5}ms]", tutor, id, score, started, finished, duration);
+        System.out.println(log);
     }
 
     public int getScore() {
