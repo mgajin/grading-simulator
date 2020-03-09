@@ -20,7 +20,7 @@ public class Assistant implements Runnable {
         try {
             semaphore.acquire();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            semaphore.release();
         }
     }
 
@@ -45,6 +45,5 @@ public class Assistant implements Runnable {
             if (!isRunning()) break;
         }
 
-        System.out.println("Assistant running: " + isRunning());
     }
 }

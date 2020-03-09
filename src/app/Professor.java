@@ -22,6 +22,7 @@ public class Professor implements Runnable {
             this.semaphore.acquire();
         } catch (InterruptedException e) {
             e.printStackTrace();
+            this.semaphore.release();
         }
     }
 
@@ -31,9 +32,9 @@ public class Professor implements Runnable {
 
     public void await(int timeout) {
         try {
-            barrier.await();
-        } catch (InterruptedException | BrokenBarrierException e) {
-            e.printStackTrace();
+            barrier.await(timeout, TimeUnit.SECONDS);
+        } catch (InterruptedException | BrokenBarrierException | TimeoutException e) {
+            this.semaphore.release();
         }
     }
 
@@ -53,7 +54,5 @@ public class Professor implements Runnable {
         while (true) {
             if (!isRunning()) break;
         }
-
-        System.out.println("Professor running: " + isRunning());
     }
 }

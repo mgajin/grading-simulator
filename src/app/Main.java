@@ -3,7 +3,6 @@ package app;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
-
     public static void main(String[] args) {
 
         int n = 100;

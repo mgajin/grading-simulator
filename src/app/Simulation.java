@@ -1,5 +1,7 @@
 package app;
 
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,7 +30,7 @@ public class Simulation {
     }
 
     public void start(int n) {
-        System.out.println("Started [" + new Date() + "]");
+        System.out.println("Started [" +  new SimpleDateFormat("mm:ss").format(new Date())+ "]");
         executor.execute(professor);
         executor.execute(assistant);
 
@@ -59,6 +61,7 @@ public class Simulation {
             averageScore += student.getScore();
         }
         averageScore /= students.size();
-        System.out.println("Average score: " + averageScore + " [" + new Date() + "]");
+        System.out.println("Finished [" + new SimpleDateFormat("mm:ss").format(new Date()) + "]");
+        System.out.println("Average Score: " + averageScore);
     }
 }

@@ -32,16 +32,16 @@ public class Student extends Thread {
 
     @Override
     public void run() {
-//        while (Simulation.isRunning.get()) {
-            try {
-//                if (score == 0) {
+        while (Simulation.isRunning.get()) {
+            if (score == 0) {
+                try {
                     present();
                     printMe();
-//                }
-            } catch (InterruptedException e) {
-                System.out.println("Student[" + id + "] interrupted");
+                } catch (InterruptedException e) {
+                    System.out.println("Student[" + id + "] interrupted");
+                }
             }
-//        }
+        }
     }
 
     public void present () throws InterruptedException {
@@ -56,7 +56,7 @@ public class Student extends Thread {
         } else {
             tutor = "Professor";
             professor.acquire();
-            professor.await(6);
+            professor.await(1);
             sleep(duration);
             score = new Random().nextInt(10) + 1;
             professor.release();
