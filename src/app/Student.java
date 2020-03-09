@@ -50,8 +50,8 @@ public class Student extends Thread {
                 started = dateFormat.format(new Date());
                 duration = new Random().nextInt(500) + 500;
                 sleep(duration);
-                professor.release();
                 finished = dateFormat.format(new Date());
+                professor.release();
                 return new Random().nextInt(10) + 1;
             } catch (BrokenBarrierException | TimeoutException e) {
                 goAssistant();
@@ -69,8 +69,8 @@ public class Student extends Thread {
                 started = dateFormat.format(new Date());
                 duration = new Random().nextInt(500) + 500;
                 sleep(duration);
-                assistant.release();
                 finished = dateFormat.format(new Date());
+                assistant.release();
                 return new Random().nextInt(10) + 1;
             } catch (InterruptedException e) {
                 assistant.release();
