@@ -32,7 +32,7 @@ public class Student extends Thread {
 
     @Override
     public void run() {
-        while (Simulation.isRunning.get()) {
+        while (Simulation.isRunning()) {
             if (score == 0) {
                 try {
                     present();

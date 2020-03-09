@@ -1,11 +1,13 @@
 package app;
 
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
     public static void main(String[] args) {
 
-        int n = 100;
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
         Simulation simulation = new Simulation();
         simulation.start(n);
 

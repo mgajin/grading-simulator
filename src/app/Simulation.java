@@ -13,7 +13,7 @@ public class Simulation {
     private List<Student> students;
     private Assistant assistant;
     private Professor professor;
-    static AtomicBoolean isRunning;
+    private static AtomicBoolean running;
 
     private ScheduledThreadPoolExecutor studentExe;
     private ExecutorService executor;
@@ -26,7 +26,7 @@ public class Simulation {
         assistant = new Assistant(latch);
         studentExe = new ScheduledThreadPoolExecutor(5);
         executor = Executors.newFixedThreadPool(2);
-        isRunning = new AtomicBoolean(false);
+        running = new AtomicBoolean(false);
     }
 
     public void start(int n) {
@@ -36,7 +36,7 @@ public class Simulation {
 
         try {
             latch.await();
-            isRunning.set(true);
+            setRunning(true);
             for (int i = 0; i < n; i++) {
                 Student student = new Student(i, assistant, professor);
                 students.add(student);
@@ -50,7 +50,7 @@ public class Simulation {
     public void stop() {
         executor.shutdownNow();
         studentExe.shutdownNow();
-        isRunning.set(false);
+        setRunning(false);
         professor.setRunning(false);
         assistant.setRunning(false);
     }
@@ -63,5 +63,13 @@ public class Simulation {
         averageScore /= students.size();
         System.out.println("Finished [" + new SimpleDateFormat("mm:ss").format(new Date()) + "]");
         System.out.println("Average Score: " + averageScore);
+    }
+
+    public void setRunning(Boolean running) {
+        Simulation.running.set(running);
+    }
+
+    public static Boolean isRunning() {
+        return running.get();
     }
 }
