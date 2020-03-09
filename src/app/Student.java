@@ -36,13 +36,13 @@ public class Student extends Thread {
             try {
                 present();
             } catch (InterruptedException e) {
-//                assistant.release();
-//                professor.release();
-                if (tutor.equals("Assistant")) {
-                    assistant.release();
-                } else if (tutor.equals("Professor")){
-                    professor.release();
-                }
+                assistant.release();
+                professor.release();
+//                if (tutor.equals("Assistant")) {
+//                    assistant.release();
+//                } else if (tutor.equals("Professor")){
+//                    professor.release();
+//                }
             }
         }
     }
