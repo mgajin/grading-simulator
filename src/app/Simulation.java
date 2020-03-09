@@ -40,7 +40,7 @@ public class Simulation {
             for (int i = 0; i < n; i++) {
                 Student student = new Student(i, assistant, professor);
                 students.add(student);
-                studentExe.schedule(student, 200, TimeUnit.MILLISECONDS);
+                studentExe.schedule(student, 100, TimeUnit.MILLISECONDS);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -48,11 +48,11 @@ public class Simulation {
     }
 
     public void stop() {
-        executor.shutdownNow();
-        studentExe.shutdownNow();
         setRunning(false);
         professor.setRunning(false);
         assistant.setRunning(false);
+        executor.shutdownNow();
+        studentExe.shutdownNow();
     }
 
     public void log() {

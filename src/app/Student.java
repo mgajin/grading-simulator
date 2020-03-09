@@ -32,36 +32,46 @@ public class Student extends Thread {
 
     @Override
     public void run() {
-        while (Simulation.isRunning()) {
-            if (score == 0) {
-                try {
-                    present();
-                    printMe();
-                } catch (InterruptedException e) {
-                    System.out.println("Student[" + id + "] interrupted");
+        while (Simulation.isRunning() && score == 0) {
+            try {
+                present();
+            } catch (InterruptedException e) {
+//                assistant.release();
+//                professor.release();
+                if (tutor.equals("Assistant")) {
+                    assistant.release();
+                } else if (tutor.equals("Professor")){
+                    professor.release();
                 }
             }
         }
     }
 
-    public void present () throws InterruptedException {
-        started = dateFormat.format(new Date());
-        duration = new Random().nextInt(500) + 501;
+    public void present() throws InterruptedException {
+        duration = new Random().nextInt(500) + 500;
+
         if (new Random().nextBoolean()) {
             tutor = "Assistant";
-            assistant.acquire();
-            sleep(duration);
-            score = new Random().nextInt(10) + 1;
-            assistant.release();
+            if (assistant.tryAcquire()) {
+                started = dateFormat.format(new Date());
+                sleep(duration);
+                score = new Random().nextInt(10) + 1;
+                assistant.release();
+                finished = dateFormat.format(new Date());
+                printMe();
+            }
         } else {
             tutor = "Professor";
-            professor.acquire();
-            professor.await(1);
-            sleep(duration);
-            score = new Random().nextInt(10) + 1;
-            professor.release();
+            if (professor.tryAcquire()) {
+                professor.await(2);
+                started = dateFormat.format(new Date());
+                sleep(duration);
+                score = new Random().nextInt(10) + 1;
+                professor.release();
+                finished = dateFormat.format(new Date());
+                printMe();
+            }
         }
-        finished = dateFormat.format(new Date());
     }
 
     public void printMe() {

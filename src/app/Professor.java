@@ -26,6 +26,10 @@ public class Professor implements Runnable {
         }
     }
 
+    public boolean tryAcquire() {
+        return semaphore.tryAcquire();
+    }
+
     public void release() {
         this.semaphore.release();
     }
@@ -36,6 +40,10 @@ public class Professor implements Runnable {
         } catch (InterruptedException | BrokenBarrierException | TimeoutException e) {
             this.semaphore.release();
         }
+    }
+
+    public void reset() {
+        barrier.reset();
     }
 
     public Boolean isRunning() {

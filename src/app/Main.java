@@ -12,11 +12,13 @@ public class Main {
         simulation.start(n);
 
         try {
-            TimeUnit.SECONDS.sleep(5);
-            simulation.stop();
-            simulation.log();
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+        finally {
+            simulation.stop();
+            simulation.log();
         }
     }
 }

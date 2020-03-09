@@ -24,6 +24,10 @@ public class Assistant implements Runnable {
         }
     }
 
+    public boolean tryAcquire() {
+        return semaphore.tryAcquire();
+    }
+
     public void release() {
         semaphore.release();
     }
