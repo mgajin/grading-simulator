@@ -1,17 +1,20 @@
 package app;
 
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-public class Professor extends Thread {
+public class Professor implements Runnable {
 
     private CyclicBarrier barrier;
     private Semaphore semaphore;
     private CountDownLatch latch;
+    private AtomicBoolean running;
 
     public Professor(CountDownLatch latch) {
         barrier = new CyclicBarrier(2);
         semaphore = new Semaphore(2);
         this.latch = latch;
+        this.running = new AtomicBoolean(false);
     }
 
     public void acquire() {
@@ -34,9 +37,23 @@ public class Professor extends Thread {
         }
     }
 
+    public Boolean isRunning() {
+        return running.get();
+    }
+
+    public void setRunning(Boolean running) {
+        this.running.set(running);
+    }
+
     @Override
     public void run() {
         latch.countDown();
-        System.out.println("Professor running: " + isAlive());
+        setRunning(true);
+
+        while (true) {
+            if (!isRunning()) break;
+        }
+
+        System.out.println("Professor running: " + isRunning());
     }
 }
